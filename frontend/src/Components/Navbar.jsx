@@ -7,7 +7,7 @@ function Navbar() {
 <div>
   <h1 className=' text-3xl font-bold m-2'>Logo</h1>
 </div>
-<div className=' lg:ml-140'>
+<div className=''>
   <NavLink to ='/register'>
   <button className=' p-2 m-2 border-2 rounded-md ' >Register</button>
   </NavLink>
