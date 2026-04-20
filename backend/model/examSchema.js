@@ -22,6 +22,7 @@ const examSchema = mongoose.Schema({
     },
     date: {
         type: Date,
+         customDate: Date,
         required: true
     },
     duration: {

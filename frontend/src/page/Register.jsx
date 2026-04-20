@@ -5,24 +5,30 @@ function Register() {
   const [email ,setemail] = useState('')
   const[role ,setrole] = useState('')
   const [password ,setpassword]= useState('')
-  const {Register , loading ,error} = useRegister()
+  const {Register,loading ,error} = useRegister()
+
   const handlesubmit = async () => {
-    await Register (name,email ,role ,password)
+    await Register   (name,email ,role ,password)
   }
   return (
     <>
-    <form action="" onClick={handlesubmit} className=' h-screen'>
+    <form  onSubmit={handlesubmit} className=' flex items-center justify-center h-screen'>
+      <div className=' size-72'>
     <h1>
        Register here
     </h1>
-    <select className=' grid grid-cols-2' onChange={(e)=>setrole(e.target.value)}  >
+    <select className=' grid grid-row-2' onChange={(e)=>setrole(e.target.value)}  >
         <option value="">admin </option>
         <option value="">student</option>
     </select>
-    <input type="text" placeholder=' full name' onChange={(e)=>setname(e.target.value)}  />
-    <input type="email" placeholder=' enter email' onChange={(e)=>setemail(e.target.value)} />
-    <input type="password" placeholder=' enter password' onChange={(e)=>setpassword(e.target.value)} />
-    <button type=' submit' ></button>
+    <label>name </label>
+    <input type="text" placeholder=' full name' className=' w-full' onChange={(e)=>setname(e.target.value)}  />
+    <label>email</label>
+    <input type="email" placeholder=' enter email' className=' w-full' onChange={(e)=>setemail(e.target.value)} />
+    <label>password</label>
+    <input type="password" placeholder=' enter password' className=' w-full' onChange={(e)=>setpassword(e.target.value)} />
+    <button type='submit' >submit</button>
+    </div>
      </form>
     </>
   )

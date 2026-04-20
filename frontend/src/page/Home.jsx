@@ -1,10 +1,13 @@
-import ExamForm from "../Components/Examcreate"
-import Sidebar from "../Components/Sidebar"
+import Navbar from "../Components/Navbar"
+
 function Home() {
   return (
     <>  
-    <div className=''>
-     
+    <div className=' h-screen bg-amber-400'>
+        <div className=" ">
+      <Navbar/>
+        </div>
+        
         </div>
     </>
   )
