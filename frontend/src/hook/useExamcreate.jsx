@@ -1,11 +1,10 @@
 import React from 'react'
 import Examcreate from '../Components/Examcreate';
-
+import axios from 'axios';
 function useExamcreate () {
 
     const Examcreate = async () => {
         
-    
         const examData = {
             title,
             description,
