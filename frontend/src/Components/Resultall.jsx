@@ -32,13 +32,11 @@ function Resultall() {
       </div>
       
       {data.map((obj)=>(
-        <div key={obj._id}>
+        <div key={obj._id} className=' border-2 m-2'>
         <h4>Result id: {obj.result_id}</h4>
-        <h4>Exam title:</h4>
-        <h4>Exam description:</h4>
+        <h4>Exam title:{obj.title}</h4>
+        <h4>Exam description:{obj.description}</h4>
         <h4>Exam Score:{obj.score}</h4>
-        <h4>Question Attempted:</h4>
-        <h4>Correct answer</h4>
         </div>
       ))}
     </div>

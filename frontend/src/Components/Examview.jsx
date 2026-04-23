@@ -12,7 +12,7 @@ function Examview() {
     const [submit, setsubmit] = useState(false);
     const [loading, setloading] = useState(false);
     const [score, setScore] = useState(0);
-
+    const [search ,setsearch] = useState('')
     const handledata = async () => {
         setloading(true);
         try {
@@ -24,10 +24,25 @@ function Examview() {
             setloading(false);
         }
     };
+    const postdata = async () => {
+    try {
+         const res= await axios.post('http://localhost:3000/api/exams',{
+        score:score,
+        status:status
+    }) 
+    } catch (error) {
+       console.log(error);
+        
+    }
+}
+ 
 
     useEffect(() => {
         handledata();
     }, []);
+     
+  const filterexam = data.filter((obj)=>
+obj.title.toLowerCase().includes(search.toLowerCase()))
 
     useEffect(() => {
         let timer;
@@ -73,7 +88,6 @@ function Examview() {
                 <h1>Exam Submitted!</h1>
                 <h2>Your Score: {score} / {activeExam.questions.length}</h2>
                 <button onClick={() => setsubmit(false) || setActiveExam(null)}>
-                    Return to Dashboard
                 </button>
             </div>
         );
@@ -108,8 +122,12 @@ function Examview() {
 
     return (
         <>
+        <div className=' flex items-center justify-center  m-4 p-4'> 
+             <input type="search" placeholder=' search exam' onChange={(e)=>setsearch(e.target.value)} />
+        </div>
+            
             <h1>Available Exams</h1>
-            {data.map((obj) => (
+            {filterexam.map((obj) => (
                 <div key={obj._id} style={{ border: '1px solid black', margin: '10px', padding: '10px' }}>
                     <h2>{obj.title}</h2>
                     <p>{obj.description}</p>

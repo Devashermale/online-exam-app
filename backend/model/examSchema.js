@@ -9,7 +9,9 @@ const examSchema = mongoose.Schema({
     },
     exam_id: {
         unique: true,
-      type: mongoose.Schema.Types.ObjectId,
+        default:Math.random().toString(36).substr(2, 9),
+        type: String,
+        required: true,
        ref: 'User'
     },
     title: {
