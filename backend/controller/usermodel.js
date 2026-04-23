@@ -11,6 +11,7 @@ const createuser = async (req, res) => {
         })
         await newUser.save()
         res.status(201).json({ message: 'User created successfully', user: newUser })
+        res.status(200).json(newUser)
     } catch (error) {
         res.status(500).json({ message: 'Error creating user', error: error.message })
     }
@@ -18,7 +19,7 @@ const createuser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
     try {
-        const users = await user.find()
+        const users = await user.find({})
         res.status(200).json(users)
     } catch (error) {
         res.status(500).json({ message: 'Error fetching users', error: error.message })
@@ -31,6 +32,7 @@ const getUserById = async (req, res) => {
         if (!userData) {
             return res.status(404).json({ message: 'User not found' })
         }
+        res.status(200).json(userData)
     } catch (error) {
         res.status(500).json({ message: 'Error fetching user', error: error.message })
     }
@@ -47,6 +49,7 @@ const updateUser = async (req, res) => {
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' })
         }
+        res.status(200).json(userData)
     } catch (error) {
         res.status(500).json({ message: 'Error updating user', error: error.message })
     }

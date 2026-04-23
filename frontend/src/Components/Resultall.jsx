@@ -8,7 +8,7 @@ function Resultall() {
   
    const handleResult = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/results");
+      const res = await axios.get("http://localhost:3000/api/exams");
       setData(res.data);
       
 
@@ -32,12 +32,11 @@ function Resultall() {
       </div>
       
       {data.map((obj)=>(
-        <div>
-       <h1>user id: </h1>
-        <h4>Result id:</h4>
+        <div key={obj._id}>
+        <h4>Result id: {obj.result_id}</h4>
         <h4>Exam title:</h4>
         <h4>Exam description:</h4>
-        <h4>Exam Score:</h4>
+        <h4>Exam Score:{obj.score}</h4>
         <h4>Question Attempted:</h4>
         <h4>Correct answer</h4>
         </div>

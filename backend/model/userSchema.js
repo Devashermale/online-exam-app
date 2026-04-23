@@ -2,11 +2,6 @@ const mongoose =require('mongoose')
 const validator = require('validator');
 
 const userSchema = mongoose.Schema({
-    user_id: {
-        type: String,
-        unique: true,
-       default: Math.floor(100000 + Math.random() * 900000).toString()
-     },
     name: { 
         type: String,
         required: true

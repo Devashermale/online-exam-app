@@ -5,19 +5,21 @@ const mongoose = require("mongoose");
 const cors = require('cors')
 const userRoutes = require("./Route/userroute");
 const examRoutes = require("./Route/examroute");
-const resultRoutes = require("./Route/resultroute");
 const app = express();
 
 //env
 const PORT = process.env.PORT;
 
 // Middleware
-app.use(cors())
+app.use(cors({
+  origin: 'http://localhost:5173', // Replace with your React app's URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 app.use(express.json());   
 app.use(express.urlencoded({ extended: true })); 
 app.use("/api", userRoutes);  //done
 app.use('/api',examRoutes); //done
-app.use('/api',resultRoutes); //
 
 
 

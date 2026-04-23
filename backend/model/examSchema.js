@@ -8,9 +8,9 @@ const examSchema = mongoose.Schema({
     
     },
     exam_id: {
-        type: String,
         unique: true,
-        default: Math.floor(100000 + Math.random() * 900000).toString()
+      type: mongoose.Schema.Types.ObjectId,
+       ref: 'User'
     },
     title: {
         type: String,
@@ -42,7 +42,16 @@ const examSchema = mongoose.Schema({
             type: String,
             required: true
         }
-    }]
+    }],
+    score:{
+        type:String,
+        required:true
+    },
+    status:{
+        type:String,
+        required:true 
+
+    }
 },
 {
     timestamps: true

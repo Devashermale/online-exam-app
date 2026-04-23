@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import useExamcreate from '../hook/useExamcreate';
 function Examcreate() {
-    const [title, setTitle] = useState('');
+    const [title, settitle] = useState('');
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
+    const [score ,setscore] = useState('')
     const {Examcreate} = useExamcreate()
     const [questions, setQuestions] = useState([
         { question: '', options: ['', '', '', ''], answer: '' }
@@ -34,7 +35,8 @@ function Examcreate() {
     };
 
     const handleSubmit = async (e) => {
-     await Examcreate(title ,description,date,time,questions)
+        e.preventDefault()
+     await Examcreate(title,description,date,time,questions)
     };
 
     return (
@@ -48,7 +50,7 @@ function Examcreate() {
                     type="text" 
                     placeholder="title" 
                     value={title} 
-                    onChange={(e) => setTitle(e.target.value)} 
+                    onChange={(e) => settitle(e.target.value)} 
                     className=' border-0 bg-gray-200 p-2 m-4'
                 /></div>
                 <div>
@@ -77,6 +79,16 @@ function Examcreate() {
                     placeholder="Duration (minutes)" 
                     value={time} 
                     onChange={(e) => setTime(e.target.value)} 
+                    className=' p-2 m-4'
+                />
+                </div>
+                <div>
+                    <label className=' text-center w-full'>Score</label>
+                <input 
+                    type="number" 
+                    placeholder="Duration (minutes)" 
+                    value={time} 
+                    onChange={(e) => setscore(e.target.value)} 
                     className=' p-2 m-4'
                 />
                 </div>

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {createExam, getExams, getExamById, updateExam, deleteExam} = require("../controller/Examcontroller");
+const {getExams , createExam , getExamById , deleteExam ,updateExam} = require("../controller/Examcontroller");
 
 
 router.post("/exams", createExam);
