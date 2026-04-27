@@ -1,8 +1,13 @@
 const user = require('../model/userSchema')
+const jwt = require('jsonwebtoken')
 
+const createtoken = (_id)=>{
+    return jwt.sign({_id},process.env.JWT_TOKEN,{expiresIn:'24h'})
+}
 const createuser = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body
+        const { name, email, password, role } = req.body 
+   
         const newUser = new user({
             name,
             email,
@@ -10,8 +15,9 @@ const createuser = async (req, res) => {
             role
         })
         await newUser.save()
-        res.status(201).json({ message: 'User created successfully', user: newUser })
-        res.status(200).json(newUser)
+      const token = createtoken(newUser._id)
+     return res.status(200).json(newUser,token)
+
     } catch (error) {
         res.status(500).json({ message: 'Error creating user', error: error.message })
     }
@@ -20,7 +26,7 @@ const createuser = async (req, res) => {
 const getAllUsers = async (req, res) => {
     try {
         const users = await user.find({})
-        res.status(200).json(users)
+       return res.status(200).json(users)
     } catch (error) {
         res.status(500).json({ message: 'Error fetching users', error: error.message })
     }

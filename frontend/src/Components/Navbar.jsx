@@ -1,21 +1,20 @@
 import React from 'react'
-import {NavLink} from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
+
 function Navbar() {
   return (
     <>
-<div className=' grid grid-cols-2'>
-<div>
-  <h1 className=' text-3xl font-bold m-2'>Logo</h1>
-</div>
-<div className=''>
-  <NavLink to ='/register'>
-  <button className=' p-2 m-2 border-2 rounded-md ' >Register</button>
-  </NavLink>
-  <NavLink to='/login'>
-      <button className=' p-2 m-2 border-2 rounded-md '>Login</button>
-  </NavLink>
-</div>
-</div>
+      <nav class="flex justify-between items-center px-12 py-6 border-b border-slate-50">
+    <div class="text-2xl font-black italic tracking-tighter text-slate-900">LOGO</div>
+    <div class="space-x-4">
+      <NavLink to='/register'>
+      <button class="px-6 py-2 font-semibold text-slate-700 hover:text-black">Register</button>
+      </NavLink>
+      <NavLink to='/login '>
+      <button class="px-6 py-2 bg-yellow-400 font-bold rounded-lg shadow-sm hover:bg-yellow-500 transition-all">Login</button>
+      </NavLink>
+    </div>
+  </nav>
     </>
   )
 }

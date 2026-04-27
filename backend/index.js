@@ -9,10 +9,11 @@ const app = express();
 
 //env
 const PORT = process.env.PORT;
+const JWT_TOKEN = process.env.JWT_TOKEN
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173', // Replace with your React app's URL
+  origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
@@ -24,7 +25,7 @@ app.use('/api',examRoutes); //done
 
 
 //db
-mongoose.connect("mongodb://localhost:27017/exam")
+mongoose.connect('mongodb://localhost:27017/exam')
     .then(() => {
     app.listen(PORT, () => {
     console.log(` http://localhost:${PORT}`);

@@ -9,6 +9,7 @@ import ResultView from './Components/ResultView.jsx'
 import Resultall from './Components/Resultall'
 import StudentDash from './page/StudentDash'
 import AdminDash from './page/AdminDash'
+import ProtectRoute from './context/ProtectRoute.jsx'
 function App() {
   return (
     <>
@@ -16,12 +17,41 @@ function App() {
         <Route path='/login' element={<Login/>}/>
         <Route path='/' element={<Home/>}/>
         <Route path='/register' element={<Register/>}/>
-        <Route path='/exam-create' element ={<Examcreate/>}/>
-        <Route path='/exam-view' element={<Examview/>}/>
-        <Route path='/result-all' element={<Resultall/>}/>
-        <Route path='/result-view' element={<ResultView/>}/>
-        <Route path='/admin-dash' element={<AdminDash/>}/>
-        <Route path='/Student-dash' element={<StudentDash/>}/>
+
+        
+       <Route path='/student-dash' element={
+        <ProtectRoute allowedrole={['student']}>
+           <StudentDash/> 
+        </ProtectRoute>
+      }/>
+
+           <Route path='/exam' element={
+            <Examview/>
+              }/>
+
+           <Route path='/result' element={ <ProtectRoute allowedrole={['student']}>
+            <ResultView/>
+            </ProtectRoute>}/>
+
+
+
+        <Route path='/admin-dash' element={
+          <ProtectRoute allowedrole={['admin']}>
+            <AdminDash/>
+            </ProtectRoute>
+          }/>
+          
+        <Route path='/exam-create' element ={<ProtectRoute allowedrole={['admin']}>
+           <Examcreate/>
+        </ProtectRoute>
+         }/>
+
+        <Route path='/result-all' element={
+          <ProtectRoute allowedrole={['admin']}>
+         <Resultall/>
+          </ProtectRoute>
+         }/>
+      
 
       </Routes>
  
