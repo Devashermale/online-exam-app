@@ -13,8 +13,9 @@ exports.createExam = async (req, res) => {
 
 // Get all exams
 exports.getExams = async (req, res) => {
+    const user_id = req.user_id
     try {
-        const exams = await Exam.find();
+        const exams = await Exam.find({user_id});
         res.status(200).json(exams);
     } catch (error) {
         res.status(500).json({ message: error.message });

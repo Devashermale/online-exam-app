@@ -72,7 +72,6 @@ function Login() {
             </div>
           </div>
 
-          {/* Password Input - Type fixed to "password" */}
           <div className="space-y-1.5">
             <div className="flex justify-between items-center ml-1">
               <label className="text-sm font-bold text-slate-700">Password</label>

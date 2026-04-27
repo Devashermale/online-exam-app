@@ -16,12 +16,14 @@ function Home() {
       A seamless, secure, and stress-free environment for students and professionals to ace their certifications and exams.
     </p>
     <div class="flex flex-col sm:flex-row justify-center gap-4">
+      <NavLink to='/register'>
       <button class="px-8 py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-200">
         Get Started for Free
-      </button>
+      </button></NavLink>
+      <NavLink to= '/exam'>
       <button class="px-8 py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-xl hover:border-yellow-400 transition-all">
         Take a Demo Exam
-      </button>
+      </button></NavLink>
     </div>
   </section>
 
