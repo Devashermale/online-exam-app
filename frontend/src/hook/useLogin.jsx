@@ -5,24 +5,26 @@ function useLogin() {
    const [error ,seterror] =useState(null)
    const[loading ,setloading] = useState(false)
    const {dispatch}= useAuthContext()
-   const Login =async (email,password,role) => {
+   const Login = async (email,password,role) => {
     setloading(true)
     seterror(null)
     try {
-      const res =await axios.post(' http://localhost:3000/api/users',{
+      const res =await axios.post('http://localhost:3000/api/login',{
         email:email,
         password:password,
         role:role,
       }) 
       
-      localStorage.setItem('user', JSON.stringify(res.data))
-      dispatch({type:"LOGIN", payload:res.data})
+     if (res.status ===200 || res.status ===201) {
+         localStorage.setItem('user', JSON.stringify(res.data));
 
+        dispatch({type:'LOGIN',payload:res.data})
+     }
       return res.data
     } catch (error) {
        seterror(error) 
     }finally{
-        Setloading(true)
+        setloading(true)
     }
    }
    return {Login ,loading, error}

@@ -47,11 +47,9 @@ const examSchema = mongoose.Schema({
     }],
     score:{
         type:String,
-        required:true
     },
     status:{
         type:String,
-        required:true 
 
     }
 },
@@ -66,23 +64,7 @@ examSchema.static.creteExam = async function (examdata)
 
         const exam = await this.create(examdata);
 
-     if(!email || !password) {
-        throw new Error('All fields must be filled');
-    }
-     if(!validator.isStrongPassword(password)){
-    throw Error("password is not strong"); 
-}
-if(!validator.isEmail(email)){
-    throw Error("email is not valid");
-}
-if (await this.findOne({ email })) {
-    throw new Error('Email already in use');
-}
-
-if(exam){
-throw Error('email already exits')
-
-}
+   
 
 return exam
 }

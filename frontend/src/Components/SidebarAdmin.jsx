@@ -44,13 +44,13 @@ function SidebarAdmin() {
           <span>Create Exam</span>
         </NavLink>
 
-        <NavLink 
+       {/* <NavLink 
           to='/result-all' 
           className={({ isActive }) => isActive ? activeLink : normalLink}
         >
           <BarChart3 size={20} />
           <span>Result All</span>
-        </NavLink>
+        </NavLink> */}
       </nav>
 
       {/* Logout Bottom Area */}

@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const cors = require('cors')
 const userRoutes = require("./Route/userroute");
 const examRoutes = require("./Route/examroute");
+//const ResultRoute = require('./Route/resultroute')
 const app = express();
 
 //env
@@ -21,7 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
 app.use("/api", userRoutes);  //done
 app.use('/api',examRoutes); //done
-
+//app.use('/api',ResultRoute)
 
 
 //db

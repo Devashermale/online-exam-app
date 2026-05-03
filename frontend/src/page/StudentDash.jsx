@@ -10,7 +10,6 @@ function StudentDash() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // 1. Fetch data from your API
   const fetchExams = async () => {
     try {
       setLoading(true);

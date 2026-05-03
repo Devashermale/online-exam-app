@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../Components/Sidebar';
-import { Timer, Send, Search, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Timer, Send, Search, CheckCircle2, Award, Loader2 } from 'lucide-react';
 
 function Examview() {
     const navigate = useNavigate();
-    const [data, setdata] = useState([]);
+    const [data, setdata] = useState([]); // Initialize as empty array
     const [activeExam, setActiveExam] = useState(null);
     const [answers, setAnswers] = useState({});
-    const [error, seterror] = useState(null);
     const [second, setsecond] = useState(0);
     const [submit, setsubmit] = useState(false);
     const [loading, setloading] = useState(false);
@@ -20,18 +19,18 @@ function Examview() {
         setloading(true);
         try {
             const res = await axios.get('http://localhost:3000/api/exams');
-            setdata(res.data);
+            setdata(Array.isArray(res.data) ? res.data : []);
         } catch (error) {
-            seterror(error.message);
+            console.error("Fetch error:", error.message);
+            setdata([]); // Fallback to empty array to prevent map errors
         } finally {
             setloading(false);
         }
     };
 
-    // Fixed postdata to include exam details
     const postdata = async (finalScore) => {
         try {
-            await axios.post('http://localhost:3000/api/results', {
+            await axios.post('http://localhost:3000/api/exam', {
                 exam_id: activeExam._id,
                 title: activeExam.title,
                 score: finalScore,
@@ -62,10 +61,6 @@ function Examview() {
         setAnswers({});
     };
 
-    const handleOptionChange = (qIndex, value) => {
-        setAnswers({ ...answers, [qIndex]: value });
-    };
-
     const handlesubmit = async () => {
         let tempScore = 0;
         activeExam.questions.forEach((q, idx) => {
@@ -73,22 +68,23 @@ function Examview() {
         });
         setScore(tempScore);
         setsubmit(true);
-        postdata(tempScore); // Pass score directly to avoid state sync lag
+        postdata(tempScore);
     };
 
-    const filterexam = data.filter((obj) =>
-        obj.title.toLowerCase().includes(search.toLowerCase())
+    // FIX: Added optional chaining and empty array fallback to prevent crash
+    const filterexam = (data || []).filter((obj) =>
+        obj?.title?.toLowerCase().includes(search.toLowerCase())
     );
 
     // --- RENDER LOGIC ---
 
     if (loading) return (
-        <div className="flex items-center justify-center h-screen bg-slate-50 text-indigo-600 font-bold">
-            Loading Assessments...
+        <div className="flex flex-col items-center justify-center h-screen bg-slate-50 text-indigo-600 font-bold">
+            <Loader2 className="animate-spin mb-4" size={40} />
+            <p>Loading Assessments...</p>
         </div>
     );
 
-    // 1. Result Screen
     if (submit) {
         return (
             <div className="flex min-h-screen bg-slate-50">
@@ -97,13 +93,16 @@ function Examview() {
                     <div className="bg-white p-10 rounded-3xl shadow-xl border border-slate-200 text-center max-w-md w-full">
                         <CheckCircle2 className="mx-auto text-emerald-500 mb-4" size={64} />
                         <h1 className="text-3xl font-black text-slate-900 mb-2">Exam Submitted!</h1>
-                        <p className="text-slate-500 mb-6">Great job completing the assessment.</p>
                         <div className="bg-slate-50 rounded-2xl p-6 mb-8">
                             <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Final Score</p>
-                            <p className="text-5xl font-black text-indigo-600">{score} / {activeExam.questions.length}</p>
+                            <p className="text-5xl font-black text-indigo-600">{score} / {activeExam?.questions.length}</p>
                         </div>
                         <button 
-                            onClick={() => { setsubmit(false); setActiveExam(null); }}
+                            onClick={() => { 
+                                setsubmit(false); 
+                                setActiveExam(null); 
+                                handledata(); // Refresh list to show status
+                            }}
                             className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all"
                         >
                             Back to Dashboard
@@ -114,7 +113,6 @@ function Examview() {
         );
     }
 
-    // 2. Active Exam Screen (Full screen focus)
     if (activeExam) {
         return (
             <div className="min-h-screen bg-slate-50 p-6 md:p-12">
@@ -147,7 +145,7 @@ function Examview() {
                                                 name={`q${qIndex}`} 
                                                 value={opt} 
                                                 className="w-4 h-4 text-indigo-600"
-                                                onChange={(e) => handleOptionChange(qIndex, e.target.value)} 
+                                                onChange={(e) => setAnswers({ ...answers, [qIndex]: e.target.value })} 
                                             />
                                             <span className="font-medium text-slate-700">{opt}</span>
                                         </label>
@@ -168,7 +166,6 @@ function Examview() {
         );
     }
 
-    // 3. Exam List Screen (Selection)
     return (
         <div className="flex min-h-screen bg-slate-50">
             <Sidebar />
@@ -191,21 +188,29 @@ function Examview() {
                     </header>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filterexam.map((obj) => (
-                            <div key={obj._id} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col">
-                                <h2 className="text-xl font-bold text-slate-800 mb-2">{obj.title}</h2>
-                                <p className="text-slate-500 text-sm mb-6 flex-1 line-clamp-3">{obj.description}</p>
-                                <div className="border-t border-slate-50 pt-4 flex items-center justify-between">
-                                    <span className="text-xs font-bold text-slate-400 uppercase">{new Date(obj.date).toLocaleDateString()}</span>
-                                    <button 
-                                        onClick={() => startExam(obj)}
-                                        className="px-5 py-2 bg-indigo-50 text-indigo-600 font-bold rounded-lg hover:bg-indigo-600 hover:text-white transition-all"
-                                    >
-                                        Start Now
-                                    </button>
+                        {filterexam.length > 0 ? (
+                            filterexam.map((obj) => (
+                                <div key={obj._id} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col">
+                                    <h2 className="text-xl font-bold text-slate-800 mb-2">{obj.title}</h2>
+                                    <p className="text-slate-500 text-sm mb-6 flex-1 line-clamp-3">{obj.description}</p>
+                                    <div className="border-t border-slate-50 pt-4 flex items-center justify-between">
+                                        <span className="text-xs font-bold text-slate-400 uppercase">
+                                            {obj.date ? new Date(obj.date).toLocaleDateString() : 'No Date'}
+                                        </span>
+                                        <button 
+                                            onClick={() => startExam(obj)}
+                                            className="px-5 py-2 bg-indigo-50 text-indigo-600 font-bold rounded-lg hover:bg-indigo-600 hover:text-white transition-all"
+                                        >
+                                            Start Now
+                                        </button>
+                                    </div>
                                 </div>
+                            ))
+                        ) : (
+                            <div className="col-span-full text-center py-20 text-slate-400">
+                                No exams found matching your search.
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
             </main>

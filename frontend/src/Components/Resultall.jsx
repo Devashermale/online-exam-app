@@ -1,19 +1,23 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import SidebarAdmin from './SidebarAdmin';
-import { Search, FileText, ClipboardCheck } from 'lucide-react'; // Icons for professional look
+import { Search, Layout, Activity, CheckCircle2, XCircle, Clock } from 'lucide-react';
 
 function Resultall() {
   const [data, setData] = useState([]);
   const [search, setsearch] = useState('');
   const [error, seterror] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const handleResult = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/exams");
+      setLoading(true);
+      const res = await axios.get("http://localhost:3000/api/exam");
       setData(res.data);
     } catch (error) {
       seterror(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -27,69 +31,102 @@ function Resultall() {
 
   return (
     <div className="flex min-h-screen bg-slate-50">
-      {/* 1. Sidebar */}
       <SidebarAdmin />
 
-      {/* 2. Main Content Area (shifted left by 64 units) */}
       <main className="flex-1 ml-64 p-10">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           
           {/* Header Section */}
-          <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
+          <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900">Student Results</h1>
-              <p className="text-slate-500">Monitor exam performance and scores across all departments.</p>
+              <div className="flex items-center gap-2 text-indigo-600 font-bold text-sm uppercase tracking-widest mb-2">
+                <Activity size={16} />
+                System Analytics
+              </div>
+              <h1 className="text-4xl font-black text-slate-900 tracking-tight">Exam Performance</h1>
+              <p className="text-slate-500 mt-2 font-medium">Review and manage all active assessment outcomes.</p>
             </div>
 
-            {/* Search Bar Container */}
             <div className="relative group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={20} />
               <input 
                 type="search" 
-                className="pl-11 pr-4 py-3 w-full md:w-80 bg-white border border-slate-200 rounded-xl shadow-sm outline-none focus:ring-2 focus:ring-indigo-500 transition-all" 
-                placeholder="Search by exam title..." 
+                className="pl-12 pr-6 py-4 w-full md:w-96 bg-white border border-slate-200 rounded-2xl shadow-sm outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium" 
+                placeholder="Search assessments..." 
                 onChange={(e) => setsearch(e.target.value)} 
               />
             </div>
           </header>
 
+          {/* Error State */}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl mb-6">
-              Error fetching data: {error}
+            <div className="flex items-center gap-3 bg-red-50 border border-red-100 text-red-600 p-4 rounded-2xl mb-8 font-medium">
+              <XCircle size={20} /> {error}
             </div>
           )}
 
           {/* Results Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.length > 0 ? (
-              filtered.map((obj) => (
-                <div key={obj._id} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-all hover:-translate-y-1 group">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
-                      <ClipboardCheck size={24} />
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+              {[1, 2, 3].map(i => <div key={i} className="h-64 bg-slate-200 rounded-3xl"></div>)}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filtered.length > 0 ? (
+                filtered.map((obj) => (
+                  <div key={obj._id} className="group bg-white rounded-[2rem] p-8 shadow-sm border border-slate-200 hover:shadow-xl hover:border-indigo-100 transition-all duration-300 relative overflow-hidden">
+                    
+                    {/* Status Badge - Absolute Position */}
+                    <div className="absolute top-6 right-6">
+                       {obj.status === "Passed" ? (
+                         <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold border border-emerald-100">
+                           <CheckCircle2 size={12} /> PASSED
+                         </div>
+                       ) : obj.status === "Failed" ? (
+                        <div className="flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-600 rounded-full text-xs font-bold border border-rose-100">
+                           <XCircle size={12} /> FAILED
+                         </div>
+                       ) : (
+                        <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-bold border border-slate-100">
+                           <Clock size={12} /> PENDING
+                         </div>
+                       )}
                     </div>
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">ID: {obj.exam_id || 'N/A'}</span>
-                  </div>
 
-                  <h3 className="text-xl font-bold text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors">{obj.title}</h3>
-                  <p className="text-slate-500 text-sm mb-6 line-clamp-2">{obj.description}</p>
-                  
-                  <div className="pt-4 border-t border-slate-50 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-slate-400 font-semibold uppercase">Passing Score</p>
-                      <p className="text-lg font-bold text-slate-900">{obj.score} <span className="text-slate-400 text-sm font-normal">pts</span></p>
+                    <div className="mb-6 inline-flex p-4 bg-indigo-50 text-indigo-600 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                      <Layout size={28} />
+                    </div>
+
+                    <h3 className="text-xl font-black text-slate-900 mb-2 leading-tight">{obj.title}</h3>
+                    <p className="text-slate-400 text-sm font-medium mb-8 line-clamp-2">{obj.description}</p>
+                    
+                    <div className="flex items-center justify-between pt-6 border-t border-slate-50">
+                      <div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Final Score</p>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-3xl font-black text-slate-900">{obj.score || '0'}</span>
+                          <span className="text-slate-400 font-bold">PTS</span>
+                        </div>
+                      </div>
+                      
+                      <div className="text-right">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Exam ID</p>
+                        <p className="text-xs font-mono font-bold text-indigo-600">#{obj.exam_id?.slice(0, 8)}</p>
+                      </div>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div className="col-span-full py-24 bg-white rounded-[3rem] border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-center">
+                  <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4 text-slate-300">
+                    <Search size={40} />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900">No Assessments Found</h3>
+                  <p className="text-slate-500 mt-1 font-medium">Try adjusting your search filters.</p>
                 </div>
-              ))
-            ) : (
-              <div className="col-span-full py-20 text-center">
-                <FileText className="mx-auto text-slate-300 mb-4" size={48} />
-                <p className="text-slate-500 text-lg">No results found matching "{search}"</p>
-              </div>
-            )}
-          </div>
-
+              )}
+            </div>
+          )}
         </div>
       </main>
     </div>

@@ -15,7 +15,7 @@ exports.createExam = async (req, res) => {
 exports.getExams = async (req, res) => {
     const user_id = req.user_id
     try {
-        const exams = await Exam.find({user_id});
+        const exams = await Exam.find({});
         res.status(200).json(exams);
     } catch (error) {
         res.status(500).json({ message: error.message });
