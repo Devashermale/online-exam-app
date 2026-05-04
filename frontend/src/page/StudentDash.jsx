@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Sidebar from '../Components/Sidebar';
-import { BookOpen, Award, Clock, ArrowRight, Loader2 } from 'lucide-react';
+import { BookOpen, Clock, ArrowRight, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 function StudentDash() {
@@ -13,9 +13,26 @@ function StudentDash() {
   const fetchExams = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('http://localhost:3000/api/exams');
+      
+      // 1. Get user data from localStorage
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      const token = storedUser?.token;
+
+      // 2. Check if token exists before making the call
+      if (!token) {
+        setError("You are not authenticated. Please log in.");
+        return;
+      }
+
+      const res = await axios.get('http://localhost:3000/api/exams', {
+        headers: {
+          'authorization': `Bearer ${token}`
+        }
+      });
+      
       setExams(res.data);
     } catch (err) {
+      console.error("Fetch error:", err);
       setError("Could not load exams. Please try again later.");
     } finally {
       setLoading(false);
@@ -23,7 +40,12 @@ function StudentDash() {
   };
 
   useEffect(() => {
-    fetchExams();
+    // 3. Simple protection: if no user in storage, kick to login immediately
+    if (!localStorage.getItem('user')) {
+      navigate('/login');
+    } else {
+      fetchExams();
+    }
   }, []);
 
   return (
@@ -45,12 +67,10 @@ function StudentDash() {
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Available Exams</p>
                 <p className="text-3xl font-black text-indigo-600 mt-1">{exams.length}</p>
             </div>
-            {/* Add more stat cards here as needed */}
           </div>
 
           <h2 className="text-xl font-bold text-slate-800 mb-6">Available Assessments</h2>
 
-          {/* 2. Loading & Error States */}
           {loading ? (
             <div className="flex flex-col items-center py-20 text-slate-400">
               <Loader2 className="animate-spin mb-4" size={40} />
@@ -61,7 +81,6 @@ function StudentDash() {
               {error}
             </div>
           ) : (
-            /* 3. Data Mapping into the Grid */
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {exams.map((exam) => (
                 <div key={exam._id} className="bg-white border border-slate-200 p-6 rounded-2xl hover:border-indigo-400 hover:shadow-md transition-all group">
@@ -86,9 +105,8 @@ function StudentDash() {
                     </span>
                   </div>
 
-                  {/* 4. Navigate to your Examview page */}
                   <button 
-                    onClick={() => navigate('/exam')} // Adjust this route to where your Examview is
+                    onClick={() => navigate('/exam')} 
                     className="w-full py-3 bg-slate-50 text-slate-700 font-bold rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition-all"
                   >
                     Start Exam

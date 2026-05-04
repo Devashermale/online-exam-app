@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../Components/Sidebar';
-import { Timer, Send, Search, CheckCircle2, Award, Loader2 } from 'lucide-react';
+import { Timer, Send, Search, CheckCircle2, Loader2 } from 'lucide-react';
 
 function Examview() {
     const navigate = useNavigate();
-    const [data, setdata] = useState([]); // Initialize as empty array
+    const [data, setdata] = useState([]);
     const [activeExam, setActiveExam] = useState(null);
     const [answers, setAnswers] = useState({});
     const [second, setsecond] = useState(0);
@@ -15,14 +15,24 @@ function Examview() {
     const [score, setScore] = useState(0);
     const [search, setsearch] = useState('');
 
+    // Helper to get token from localStorage safely
+    const getAuthHeader = () => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        return user && user.token ? { 'Authorization': `Bearer ${user.token}` } : {};
+    };
+
     const handledata = async () => {
         setloading(true);
         try {
-            const res = await axios.get('http://localhost:3000/api/exams');
+            const res = await axios.get('http://localhost:3000/api/exams', {
+                headers: getAuthHeader()
+            });
             setdata(Array.isArray(res.data) ? res.data : []);
         } catch (error) {
-            console.error("Fetch error:", error.message);
-            setdata([]); // Fallback to empty array to prevent map errors
+            console.error("Fetch error:", error.response?.data?.error || error.message);
+            // If token is expired or unauthorized, you might want to redirect
+            if (error.response?.status === 401) navigate('/login');
+            setdata([]);
         } finally {
             setloading(false);
         }
@@ -30,19 +40,31 @@ function Examview() {
 
     const postdata = async (finalScore) => {
         try {
-            await axios.post('http://localhost:3000/api/exam', {
-                exam_id: activeExam._id,
-                title: activeExam.title,
-                score: finalScore,
-                totalQuestions: activeExam.questions.length,
-                status: finalScore >= (activeExam.questions.length / 2) ? "Passed" : "Failed"
-            });
+            await axios.post('http://localhost:3000/api/exam', 
+                {
+                    exam_id: activeExam._id,
+                    title: activeExam.title,
+                    score: finalScore,
+                    totalQuestions: activeExam.questions.length,
+                    status: finalScore >= (activeExam.questions.length / 2) ? "Passed" : "Failed"
+                }, 
+                {
+                    headers: getAuthHeader()
+                }
+            );
         } catch (error) {
-            console.error("Failed to save result:", error);
+            console.error("Failed to save result:", error.response?.data?.error || error.message);
         }
     }
 
-    useEffect(() => { handledata(); }, []);
+    useEffect(() => { 
+        const user = localStorage.getItem('user');
+        if (!user) {
+            navigate('/login');
+        } else {
+            handledata(); 
+        }
+    }, []);
 
     useEffect(() => {
         let timer;
@@ -68,15 +90,12 @@ function Examview() {
         });
         setScore(tempScore);
         setsubmit(true);
-        postdata(tempScore);
+        await postdata(tempScore);
     };
 
-    // FIX: Added optional chaining and empty array fallback to prevent crash
     const filterexam = (data || []).filter((obj) =>
         obj?.title?.toLowerCase().includes(search.toLowerCase())
     );
-
-    // --- RENDER LOGIC ---
 
     if (loading) return (
         <div className="flex flex-col items-center justify-center h-screen bg-slate-50 text-indigo-600 font-bold">
@@ -101,7 +120,7 @@ function Examview() {
                             onClick={() => { 
                                 setsubmit(false); 
                                 setActiveExam(null); 
-                                handledata(); // Refresh list to show status
+                                handledata(); 
                             }}
                             className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all"
                         >
@@ -143,9 +162,9 @@ function Examview() {
                                             <input 
                                                 type="radio" 
                                                 name={`q${qIndex}`} 
-                                                value={opt} 
                                                 className="w-4 h-4 text-indigo-600"
-                                                onChange={(e) => setAnswers({ ...answers, [qIndex]: e.target.value })} 
+                                                onChange={() => setAnswers({ ...answers, [qIndex]: opt })} 
+                                                checked={answers[qIndex] === opt}
                                             />
                                             <span className="font-medium text-slate-700">{opt}</span>
                                         </label>
@@ -157,7 +176,7 @@ function Examview() {
 
                     <button 
                         onClick={handlesubmit} 
-                        className="mt-12 mb-20 w-full py-5 bg-indigo-600 text-white rounded-2xl font-bold text-xl hover:bg-indigo-700 shadow-lg shadow-indigo-100 flex items-center justify-center gap-2"
+                        className="mt-12 mb-20 w-full py-5 bg-indigo-600 text-white rounded-2xl font-bold text-xl hover:bg-indigo-700 shadow-lg flex items-center justify-center gap-2"
                     >
                         <Send size={24} /> Submit Assessment
                     </button>
@@ -180,7 +199,7 @@ function Examview() {
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                             <input 
                                 type="search" 
-                                className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all" 
+                                className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" 
                                 placeholder="Search exams..." 
                                 onChange={(e) => setsearch(e.target.value)} 
                             />

@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const examSchema = mongoose.Schema({
     user_id: {
         type: String,
+        required: true,
     
     },
     exam_id: {

@@ -8,19 +8,24 @@ const auth = async (req, res, next) => {
         return res.status(401).json({ error: "Authentication token required" });
     }
 
-    // Header format: "Bearer <token>"
+    // Corrected split logic: split by space ' '
     const token = authorization.split(' ')[1];
 
     try {
-        const { _id } = jwt.verify(token, process.env.SECRET);
-        
-        // Attach user ID to the request object for use in controllers
+        // Verify the token
+        const { _id } = jwt.verify(token, process.env.JWT_TOKEN);
+
+        // Attach only the ID to the request object to keep it light
+        // We use .select('_id') to avoid fetching unnecessary sensitive data
         req.user = await User.findOne({ _id }).select('_id');
         
-        if (!req.user) throw new Error('User not found');
+        if (!req.user) {
+            return res.status(401).json({ error: 'User no longer exists' });
+        }
         
         next();
     } catch (error) {
+        console.error(error); // Helpful for debugging server-side
         res.status(401).json({ error: 'Request is not authorized' });
     }
 };

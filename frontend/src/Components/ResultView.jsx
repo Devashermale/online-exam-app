@@ -12,10 +12,28 @@ function ResultView() {
   const handleResult = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:3000/api/exams"); 
+      
+      // 1. Get user and token from storage
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = user?.token;
+
+      if (!token) {
+        seterror("Authentication required. Please log in.");
+        return;
+      }
+
+      // 2. Pass the token in the headers
+      // Note: Ensure this URL points to your RESULTS collection, not just the general EXAMS list
+      const res = await axios.get("http://localhost:3000/api/exams", {
+        headers: {
+          'authorization': `Bearer ${token}`
+        }
+      }); 
+      
       setData(res.data);
     } catch (error) {
-      seterror(error.message);
+      // Use detailed error message if available
+      seterror(error.response?.data?.error || error.message);
     } finally {
       setLoading(false);
     }
@@ -25,8 +43,9 @@ function ResultView() {
     handleResult();
   }, []);
 
-  const filterexam = data.filter(obj => 
-    obj.title.toLowerCase().includes(search.toLowerCase())
+  // Safeguard against 'data' being undefined or null
+  const filterexam = (data || []).filter(obj => 
+    obj?.title?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -66,16 +85,16 @@ function ResultView() {
           ) : filterexam.length > 0 ? (
             <div className="grid grid-cols-1 gap-4">
               {filterexam.map((obj) => (
-                <div key={obj._id} className="bg-white border border-slate-200 p-6 rounded-[1.5rem] flex flex-col md:flex-row md:items-center justify-between hover:shadow-xl hover:border-indigo-100 transition-all group">
+                <div key={obj._id} className="bg-white border border-slate-200 p-6 rounded-3xl flex flex-col md:flex-row md:items-center justify-between hover:shadow-xl hover:border-indigo-100 transition-all group">
                   <div className="flex items-center gap-5">
-                    <div className={`p-4 rounded-2xl transition-all ${obj.score ? 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white' : 'bg-slate-100 text-slate-400'}`}>
+                    <div className={`p-4 rounded-2xl transition-all ${obj.score !== undefined ? 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white' : 'bg-slate-100 text-slate-400'}`}>
                       <Trophy size={24} />
                     </div>
                     <div>
                       <h4 className="text-lg font-bold text-slate-900">{obj.title}</h4>
                       <div className="flex items-center gap-4 mt-1 text-sm text-slate-400 font-medium">
-                        <span className="flex items-center gap-1"><Calendar size={14} /> {new Date(obj.date).toLocaleDateString()}</span>
-                        <span className="flex items-center gap-1"><FileText size={14} /> ID: {obj.exam_id?.slice(0, 8)}</span>
+                        <span className="flex items-center gap-1"><Calendar size={14} /> {obj.date ? new Date(obj.date).toLocaleDateString() : 'N/A'}</span>
+                        <span className="flex items-center gap-1"><FileText size={14} /> ID: {obj.exam_id?.slice(0, 8) || 'N/A'}</span>
                       </div>
                     </div>
                   </div>
@@ -83,25 +102,24 @@ function ResultView() {
                   <div className="mt-6 md:mt-0 flex items-center justify-between md:justify-end gap-10 border-t md:border-t-0 pt-4 md:pt-0">
                     <div className="text-right">
                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Performance</p>
-                      <p className={`text-2xl font-black ${obj.score ? 'text-slate-900' : 'text-slate-300'}`}>
+                      <p className={`text-2xl font-black ${obj.score !== undefined ? 'text-slate-900' : 'text-slate-300'}`}>
                         {obj.score ?? '--'} <span className="text-sm font-bold text-slate-400">PTS</span>
                       </p>
                     </div>
 
-                    {/* Dynamic Status Label */}
-                    <div className={`min-w-[100px] text-center px-4 py-2 rounded-xl font-black text-xs tracking-tighter ${
-                      !obj.score ? 'bg-slate-100 text-slate-400' : 
+                    <div className={`min-w-25 text-center px-4 py-2 rounded-xl font-black text-xs tracking-tighter ${
+                      obj.score === undefined ? 'bg-slate-100 text-slate-400' : 
                       obj.status === 'Passed' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 
                       'bg-rose-50 text-rose-600 border border-rose-100'
                     }`}>
-                      {!obj.score ? 'NOT ATTEMPTED' : obj.status?.toUpperCase()}
+                      {obj.score === undefined ? 'NOT ATTEMPTED' : obj.status?.toUpperCase()}
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-20 bg-white rounded-[2rem] border-2 border-dashed border-slate-200">
+            <div className="text-center py-20 bg-white rounded-4xl border-2 border-dashed border-slate-200">
                 <Search size={40} className="mx-auto text-slate-200 mb-4" />
                 <p className="text-slate-500 font-bold">No matching results found</p>
                 <p className="text-slate-400 text-sm">Try searching for a different exam title.</p>
