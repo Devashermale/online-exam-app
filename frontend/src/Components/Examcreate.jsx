@@ -9,7 +9,7 @@ function Examcreate() {
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
     const [score, setscore] = useState('');
-    const { Examcreate } = useExamcreate();
+    const { createExam } = useExamcreate();
     const [questions, setQuestions] = useState([
         { question: '', options: ['', '', '', ''], answer: '' }
     ]);
@@ -43,7 +43,7 @@ function Examcreate() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await Examcreate(title, description, date, time, questions);
+        await createExam(title, description, date, time, questions);
     };
 
     return (
