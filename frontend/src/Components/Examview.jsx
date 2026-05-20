@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../Components/Sidebar';
@@ -21,7 +21,7 @@ function Examview() {
         return user && user.token ? { 'Authorization': `Bearer ${user.token}` } : {};
     };
 
-    const handledata = async () => {
+    const handledata = useCallback(async () => {
         setloading(true);
         try {
             const res = await axios.get('http://localhost:3000/api/exams', {
@@ -36,11 +36,11 @@ function Examview() {
         } finally {
             setloading(false);
         }
-    };
+    }, [navigate]);
 
     const postdata = async (finalScore) => {
         try {
-            await axios.post('http://localhost:3000/api/exam', 
+            await axios.post('http://localhost:3000/api/exams', 
                 {
                     exam_id: activeExam._id,
                     title: activeExam.title,

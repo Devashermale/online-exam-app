@@ -8,7 +8,6 @@ function Examcreate() {
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
-    const [score, setscore] = useState('');
     const { createExam } = useExamcreate();
     const [questions, setQuestions] = useState([
         { question: '', options: ['', '', '', ''], answer: '' }
