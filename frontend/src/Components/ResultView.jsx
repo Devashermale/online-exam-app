@@ -12,8 +12,8 @@ function ResultView() {
   const handleResult = async () => {
     try {
       setLoading(true);
+      seterror(null); // Clear previous errors
       
-      // 1. Get user and token from storage
       const user = JSON.parse(localStorage.getItem('user'));
       const token = user?.token;
 
@@ -22,17 +22,14 @@ function ResultView() {
         return;
       }
 
-      // 2. Pass the token in the headers
-      // Note: Ensure this URL points to your RESULTS collection, not just the general EXAMS list
-      const res = await axios.get("http://localhost:3000/api/exams", {
+      const res = await axios.get("http://localhost:3000/api/results", {
         headers: {
-          'authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         }
-      }); 
-      
+      });
+
       setData(res.data);
     } catch (error) {
-      // Use detailed error message if available
       seterror(error.response?.data?.error || error.message);
     } finally {
       setLoading(false);
@@ -43,10 +40,11 @@ function ResultView() {
     handleResult();
   }, []);
 
-  // Safeguard against 'data' being undefined or null
-  const filterexam = (data || []).filter(obj => 
-    obj?.title?.toLowerCase().includes(search.toLowerCase())
-  );
+  // FIX: Checks both obj.title AND obj.exam_id.title depending on your backend structure
+  const filterexam = (data || []).filter(obj => {
+    const examTitle = obj?.title || obj?.exam_id?.title || '';
+    return examTitle.toLowerCase().includes(search.toLowerCase());
+  });
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -91,10 +89,15 @@ function ResultView() {
                       <Trophy size={24} />
                     </div>
                     <div>
-                      <h4 className="text-lg font-bold text-slate-900">{obj.title}</h4>
+                      {/* FIX: Use fallback for title if nested under exam_id */}
+                      <h4 className="text-lg font-bold text-slate-900">
+                        {obj.title || obj.exam_id?.title || 'Untitled Exam'}
+                      </h4>
                       <div className="flex items-center gap-4 mt-1 text-sm text-slate-400 font-medium">
                         <span className="flex items-center gap-1"><Calendar size={14} /> {obj.date ? new Date(obj.date).toLocaleDateString() : 'N/A'}</span>
-                        <span className="flex items-center gap-1"><FileText size={14} /> ID: {obj.exam_id?.slice(0, 8) || 'N/A'}</span>
+                        <span className="flex items-center gap-1">
+                          <FileText size={14} /> ID: {obj.exam_id?._id?.slice(0, 8) || obj.exam_id?.slice(0, 8) || 'N/A'}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -103,7 +106,7 @@ function ResultView() {
                     <div className="text-right">
                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Performance</p>
                       <p className={`text-2xl font-black ${obj.score !== undefined ? 'text-slate-900' : 'text-slate-300'}`}>
-                        {obj.score ?? '--'} <span className="text-sm font-bold text-slate-400">PTS</span>
+                        {obj.score} <span className="text-sm font-bold text-slate-400">PTS</span>
                       </p>
                     </div>
 

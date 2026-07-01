@@ -10,20 +10,19 @@ const resultSchema = mongoose.Schema({
         ref: 'Exam', 
         required: true
     },
+    title: {    
+        type: String,
+        required: true
+    },
+
     score: {
         type: Number,
         required: true
     },
     status: {
         type: String,
-        enum: ['passed', 'failed'],
         required: true
     },
-    totalQuestions:{
-        type:String,
-        required:true
-    }
-    
 }); 
 resultSchema.static.createResult = async function (resultData) {
     if (!resultData.user_id || !resultData.exam_id || !resultData.score || !resultData.status || !resultData.answers) {

@@ -40,7 +40,7 @@ function Examview() {
 
     const postdata = async (finalScore) => {
         try {
-            await axios.post('http://localhost:3000/api/exams', 
+            await axios.post('http://localhost:3000/api/results', 
                 {
                     exam_id: activeExam._id,
                     title: activeExam.title,
