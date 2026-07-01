@@ -11,6 +11,7 @@ const app = express();
 //env
 const PORT = process.env.PORT;
 const JWT_TOKEN = process.env.JWT_TOKEN
+const MONGO_URL = process.env.MONGO_URL
 
 // Middleware
 app.use(cors({
@@ -26,7 +27,7 @@ app.use('/api',ResultRoute)
 
 
 //db
-mongoose.connect('mongodb://localhost:27017/exam')
+mongoose.connect(MONGO_URL)
     .then(() => {
     app.listen(PORT, () => {
     console.log(` http://localhost:${PORT}`);
