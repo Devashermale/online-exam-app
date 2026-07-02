@@ -15,7 +15,7 @@ const MONGO_URL = process.env.MONGO_URL
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'https://online-exam-app-tau.vercel.app/',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
