@@ -12,7 +12,7 @@ function Resultall() {
   const handleResult = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:3000/api/exam");
+      const res = await axios.get("https://online-exam-app-12te.onrender.com/exam");
       setData(res.data);
     } catch (error) {
       seterror(error.message);

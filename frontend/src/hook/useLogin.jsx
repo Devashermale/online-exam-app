@@ -9,7 +9,7 @@ function useLogin() {
     setloading(true)
     seterror(null)
     try {
-      const res =await axios.post('http://localhost:3000/api/login',{
+      const res =await axios.post('https://online-exam-app-12te.onrender.com/login',{
         email:email,
         password:password,
         role:role,
