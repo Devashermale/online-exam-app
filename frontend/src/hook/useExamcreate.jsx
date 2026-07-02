@@ -14,7 +14,7 @@ function useExamcreate() {
             }
 
             // 2. Perform the POST request with the Authorization header
-            const res = await axios.post('http://localhost:3000/api/exams', 
+            const res = await axios.post('https://online-exam-app-12te.onrender.com/exams', 
                 { 
                     title: title,
                     description: description,
