@@ -24,7 +24,7 @@ function Examview() {
     const handledata = useCallback(async () => {
         setloading(true);
         try {
-            const res = await axios.get('http://localhost:3000/api/exams', {
+            const res = await axios.get('https://online-exam-app-12te.onrender.com/exams', {
                 headers: getAuthHeader()
             });
             setdata(Array.isArray(res.data) ? res.data : []);
@@ -40,7 +40,7 @@ function Examview() {
 
     const postdata = async (finalScore) => {
         try {
-            await axios.post('http://localhost:3000/api/results', 
+            await axios.post('https://online-exam-app-12te.onrender.com/results', 
                 {
                     exam_id: activeExam._id,
                     title: activeExam.title,
