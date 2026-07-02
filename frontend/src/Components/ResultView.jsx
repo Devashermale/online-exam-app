@@ -22,7 +22,7 @@ function ResultView() {
         return;
       }
 
-      const res = await axios.get("http://localhost:3000/api/results", {
+      const res = await axios.get("https://online-exam-app-12te.onrender.com/results", {
         headers: {
           Authorization: `Bearer ${token}`
         }
