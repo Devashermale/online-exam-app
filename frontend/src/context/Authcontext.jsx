@@ -12,7 +12,7 @@ export const AuthReducer = (state, action) => {
     }
 };
 
-export const AuthcontextProvider = ({ children }) => {
+export const AuthContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(AuthReducer, { user: null });
 
     useEffect(() => {
