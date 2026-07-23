@@ -35,18 +35,7 @@ npm install
 npm run dev
 The application will now be running at:Frontend Application: http://localhost:5173Backend API Base URL: http://localhost:5000📡 API Architecture OverviewModuleTypical EndpointDescriptionAccessAuthPOST /api/auth/registerRegister new userPublicAuthPOST /api/auth/loginAuthenticate user & get tokenPublicExamsGET /api/examsFetch list of active examsStudent / AdminExamsPOST /api/examsCreate a new testAdmin OnlyQuestionsPOST /api/questionsAdd question to bankAdmin OnlyResultsPOST /api/results/submitSubmit test & auto-gradeStudent📄 LicenseThis project is licensed under the MIT License."""with open("README.md", "w", encoding="utf-8") as f:f.write(readme_content)print("FILE_CREATED: README.md")
 ```text?code_stdout&code_event_index=1
-FILE_CREATED: README.md
 
-Here is a tailored README.md file designed specifically for your exact project structure (matching your Vite + React frontend and Node + Express backend folders shown in your workspace): README  MD OpenRaw Markdown TextIf you want to copy-paste it directly into your root README.md file:Markdown# 🎓 Online Examination System (MERN Stack)
-
-[![Stack: MERN](https://img.shields.io/badge/Stack-MERN-blue.svg)](https://mongodb.com)
-[![Frontend: Vite + React](https://img.shields.io/badge/Frontend-Vite%20%2B%20React-646CFF.svg)](https://vitejs.dev/)
-[![Backend: Node + Express](https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-green.svg)](https://nodejs.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-An end-to-end full-stack **MERN (MongoDB, Express, React, Node.js)** online examination application. Built with **Vite** on the frontend for lightning-fast development, and a clean structured **Express/Node** architecture on the backend.
-
----
 
 ## 📁 Directory Structure
 
