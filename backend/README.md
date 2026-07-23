@@ -31,20 +31,6 @@ cd backend
 # Install dependencies
 npm install
 
-# Create environment file
-touch .env
-Add the following environment variables to backend/.env:Code snippetPORT=5000
-MONGO_URI=mongodb://127.0.0.1:27017/online_exam_db
-JWT_SECRET=your_super_secret_jwt_key
-Start the backend server:Bashnpm start
-# or if you use nodemon:
-npm run dev
-2. Frontend SetupOpen a new terminal tab/window:Bash# Navigate to frontend directory
-cd frontend
-
-# Install dependencies
-npm install
-
 # Start Vite development server
 npm run dev
 The application will now be running at:Frontend Application: http://localhost:5173Backend API Base URL: http://localhost:5000📡 API Architecture OverviewModuleTypical EndpointDescriptionAccessAuthPOST /api/auth/registerRegister new userPublicAuthPOST /api/auth/loginAuthenticate user & get tokenPublicExamsGET /api/examsFetch list of active examsStudent / AdminExamsPOST /api/examsCreate a new testAdmin OnlyQuestionsPOST /api/questionsAdd question to bankAdmin OnlyResultsPOST /api/results/submitSubmit test & auto-gradeStudent📄 LicenseThis project is licensed under the MIT License."""with open("README.md", "w", encoding="utf-8") as f:f.write(readme_content)print("FILE_CREATED: README.md")
